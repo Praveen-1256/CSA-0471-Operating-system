@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Maximum number of disk requests
+#define MAX_REQUESTS 100
+
+// Function to calculate the total seek time
+int calculateSeekTime(int requests[], int totalRequests, int initialHead) {
+    int seekTime = 0;
+    int currentHead = initialHead;
+
+    for (int i = 0; i < totalRequests; ++i) {
+        // Calculate the absolute difference between the current head position and the request
+        seekTime += abs(requests[i] - currentHead);
+        currentHead = requests[i]; // Move the head to the current request
+    }
+
+    return seekTime;
+}
+
+int main() {
+    int requests[MAX_REQUESTS];
+    int totalRequests;
+    int initialHead;
+
+    // Get the total number of disk requests from the user
+    printf("Enter the total number of disk requests: ");
+    scanf("%d", &totalRequests);
+
+    // Input disk requests
+    printf("Enter the disk requests: ");
+    for (int i = 0; i < totalRequests; ++i) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Get the initial head position from the user
+    printf("Enter the initial head position: ");
+    scanf("%d", &initialHead);
+
+    // Calculate and display the total seek time
+    int seekTime = calculateSeekTime(requests, totalRequests, initialHead);
+    printf("Total Seek Time: %d\n", seekTime);
+
+    return 0;
+}
