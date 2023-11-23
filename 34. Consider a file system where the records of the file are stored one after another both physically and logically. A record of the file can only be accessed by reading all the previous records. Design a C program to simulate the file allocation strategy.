@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the maximum number of records
+#define MAX_RECORDS 100
+
+// Structure to represent a record
+struct Record {
+    int id;
+    char data[100]; // Assuming each record has a data field of maximum 100 characters
+};
+
+int main() {
+    struct Record records[MAX_RECORDS];
+    int totalRecords;
+    
+    // Get the total number of records from the user
+    printf("Enter the total number of records: ");
+    scanf("%d", &totalRecords);
+
+    // Input records
+    for (int i = 0; i < totalRecords; ++i) {
+        records[i].id = i + 1;
+        printf("Enter data for Record %d: ", i + 1);
+        scanf("%s", records[i].data);
+    }
+
+    // Display records sequentially
+    printf("\nReading records sequentially:\n");
+    for (int i = 0; i < totalRecords; ++i) {
+        printf("Record %d: %s\n", records[i].id, records[i].data);
+    }
+
+    return 0;
+}
