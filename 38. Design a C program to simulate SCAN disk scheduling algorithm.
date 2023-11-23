@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Maximum number of disk requests
+#define MAX_REQUESTS 100
+
+// Function to calculate the total seek time
+int calculateSeekTime(int requests[], int totalRequests, int initialHead, int direction) {
+    int seekTime = 0;
+    int currentHead = initialHead;
+
+    // Sort the disk requests based on their position
+    int sortedRequests[MAX_REQUESTS];
+    for (int i = 0; i < totalRequests; ++i) {
+        sortedRequests[i] = requests[i];
+    }
+    for (int i = 0; i < totalRequests - 1; ++i) {
+        for (int j = 0; j < totalRequests - i - 1; ++j) {
+            if (sortedRequests[j] > sortedRequests[j + 1]) {
+                int temp = sortedRequests[j];
+                sortedRequests[j] = sortedRequests[j + 1];
+                sortedRequests[j + 1] = temp;
+            }
+        }
+    }
+
+    // Determine the direction of movement
+    int moveDirection = direction; // 1 for right, -1 for left
+
+    // Move towards the right
+    for (int i = 0; i < totalRequests; ++i) {
+        if ((sortedRequests[i] >= currentHead && moveDirection == 1) ||
+            (sortedRequests[i] <= currentHead && moveDirection == -1)) {
+            // Calculate the absolute difference between the current head position and the request
+            seekTime += abs(sortedRequests[i] - currentHead);
+            currentHead = sortedRequests[i]; // Move the head to the current request
+        }
+    }
+
+    // Move towards the opposite direction
+    if (moveDirection == 1) {
+        seekTime += abs(currentHead - 0); // Move to the beginning
+        currentHead = 0;
+    } else {
+        seekTime += abs(currentHead - MAX_REQUESTS - 1); // Move to the end
+        currentHead = MAX_REQUESTS - 1;
+    }
+
+    // Move towards the right again
+    for (int i = totalRequests - 1; i >= 0; --i) {
+        // Calculate the absolute difference between the current head position and the request
+        seekTime += abs(sortedRequests[i] - currentHead);
+        currentHead = sortedRequests[i]; // Move the head to the current request
+    }
+
+    return seekTime;
+}
+
+int main() {
+    int requests[MAX_REQUESTS];
+    int totalRequests;
+    int initialHead;
+
+    // Get the total number of disk requests from the user
+    printf("Enter the total number of disk requests: ");
+    scanf("%d", &totalRequests);
+
+    // Input disk requests
+    printf("Enter the disk requests: ");
+    for (int i = 0; i < totalRequests; ++i) {
+        scanf("%d", &requests[i]);
+    }
+
+    // Get the initial head position from the user
+    printf("Enter the initial head position: ");
+    scanf("%d", &initialHead);
+
+    // Calculate and display the total seek time in the right direction
+    int seekTimeRight = calculateSeekTime(requests, totalRequests, initialHead, 1);
+    printf("Total Seek Time (Right): %d\n", seekTimeRight);
+
+    // Calculate and display the total seek time in the left direction
+    int seekTimeLeft = calculateSeekTime(requests, totalRequests, initialHead, -1);
+    printf("Total Seek Time (Left): %d\n", seekTimeLeft);
+
+    return 0;
+}
