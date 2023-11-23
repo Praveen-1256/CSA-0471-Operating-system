@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_FRAMES 3 // Change this to the desired number of frames
+
+void printFrames(int frames[], int n) {
+    printf("Frames: ");
+    for (int i = 0; i < n; ++i) {
+        if (frames[i] == -1) {
+            printf("Empty ");
+        } else {
+            printf("%d ", frames[i]);
+        }
+    }
+    printf("\n");
+}
+
+int isPageInFrames(int frames[], int n, int page) {
+    for (int i = 0; i < n; ++i) {
+        if (frames[i] == page) {
+            return 1; // Page found in frames
+        }
+    }
+    return 0; // Page not found in frames
+}
+
+int findOptimalReplacement(int pageReferences[], int n, int frames[], int current) {
+    int farthest = -1, farthestIndex = -1;
+    
+    for (int i = 0; i < MAX_FRAMES; ++i) {
+        int j;
+        for (j = current + 1; j < n; ++j) {
+            if (frames[i] == pageReferences[j]) {
+                if (j > farthest) {
+                    farthest = j;
+                    farthestIndex = i;
+                }
+                break;
+            }
+        }
+
+        // If the page is not referenced anymore, replace it
+        if (j == n) {
+            return i;
+        }
+    }
+
+    // If all pages in frames are referenced in the future, replace the farthest one
+    return farthestIndex;
+}
+
+int main() {
+    int frames[MAX_FRAMES];
+    int pageReferences[100]; // Assuming a maximum of 100 page references
+    int n, pageFaults = 0;
+
+    printf("Enter the number of page references: ");
+    scanf("%d", &n);
+
+    printf("Enter the page references: ");
+    for (int i = 0; i < n; ++i) {
+        scanf("%d", &pageReferences[i]);
+    }
+
+    for (int i = 0; i < MAX_FRAMES; ++i) {
+        frames[i] = -1; // Initialize frames as empty
+    }
+
+    for (int i = 0; i < n; ++i) {
+        printf("Page %d -> ", pageReferences[i]);
+        if (!isPageInFrames(frames, MAX_FRAMES, pageReferences[i])) {
+            // Page fault
+            printf("Page Fault!\n");
+            pageFaults++;
+
+            // Find the optimal page to replace
+            int indexToReplace = findOptimalReplacement(pageReferences, n, frames, i);
+            frames[indexToReplace] = pageReferences[i];
+
+            printFrames(frames, MAX_FRAMES);
+        } else {
+            // Page hit
+            printf("Page Hit!\n");
+            printFrames(frames, MAX_FRAMES);
+        }
+    }
+
+    printf("Total Page Faults: %d\n", pageFaults);
+
+    return 0;
+}
