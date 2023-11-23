@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the maximum number of blocks
+#define MAX_BLOCKS 100
+
+// Structure to represent a block
+struct Block {
+    int id;
+    char data[100]; // Assuming each block has a data field of maximum 100 characters
+};
+
+// Structure to represent the file with an index block
+struct File {
+    int totalBlocks;
+    int indexBlock[MAX_BLOCKS];
+    struct Block blocks[MAX_BLOCKS];
+};
+
+// Function to read data from a block
+void readBlock(struct Block* block) {
+    printf("Enter data for Block %d: ", block->id);
+    scanf("%s", block->data);
+}
+
+// Function to display data from a block
+void displayBlock(struct Block* block) {
+    printf("Block %d: %s\n", block->id, block->data);
+}
+
+int main() {
+    struct File file;
+    
+    // Get the total number of blocks from the user
+    printf("Enter the total number of blocks: ");
+    scanf("%d", &file.totalBlocks);
+
+    // Input data for each block
+    for (int i = 0; i < file.totalBlocks; ++i) {
+        file.blocks[i].id = i + 1;
+        readBlock(&file.blocks[i]);
+    }
+
+    // Create the index block
+    for (int i = 0; i < file.totalBlocks; ++i) {
+        file.indexBlock[i] = i;
+    }
+
+    // Display data using the index block
+    printf("\nReading data using the index block:\n");
+    for (int i = 0; i < file.totalBlocks; ++i) {
+        int blockIndex = file.indexBlock[i];
+        displayBlock(&file.blocks[blockIndex]);
+    }
+
+    return 0;
+}
